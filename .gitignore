@@ -1,0 +1,7 @@
+flutter/
+swift/
+OpenSwiftUI/
+*.tmp
+*.o
+*.so
+bin/
