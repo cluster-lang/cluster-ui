@@ -173,6 +173,18 @@ fn render_widget_to_android_xml(w: Widget, depth: int = 1) -> string:
         xml = xml + ind + "</androidx.cardview.widget.CardView>"
         return xml
 
+    // 12: Badge / Chip -> com.google.android.material.chip.Chip
+    if k == 12:
+        let mut xml: string = ind + "<com.google.android.material.chip.Chip\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "    android:textColor=\"" + w.color + "\"\n"
+        xml = xml + ind + "    app:chipBackgroundColor=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    android:textSize=\"" + str(w.font_size) + "sp\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
     // 13: Toggle / Switch -> SwitchCompat
     if k == 13:
         let mut xml: string = ind + "<androidx.appcompat.widget.SwitchCompat\n"
@@ -193,6 +205,247 @@ fn render_widget_to_android_xml(w: Widget, depth: int = 1) -> string:
         xml = xml + ind + "    android:progress=\"" + str(w.value) + "\"\n"
         xml = xml + ind + "    android:max=\"100\"\n"
         xml = xml + ind + "/>"
+        return xml
+
+    // 15: ListTile -> LinearLayout (Horizontal with Icon/Content)
+    if k == 15:
+        let mut xml: string = ind + "<LinearLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:orientation=\"horizontal\"\n"
+        xml = xml + ind + "    android:gravity=\"center_vertical\"\n"
+        xml = xml + ind + "    android:padding=\"12dp\"\n"
+        xml = xml + ind + ">\n"
+        if len(w.icon_name) > 0:
+            xml = xml + ind + "    <TextView\n"
+            xml = xml + ind + "        android:layout_width=\"wrap_content\"\n"
+            xml = xml + ind + "        android:layout_height=\"wrap_content\"\n"
+            xml = xml + ind + "        android:text=\"" + w.icon_name + "\"\n"
+            xml = xml + ind + "        android:textSize=\"20sp\"\n"
+            xml = xml + ind + "        android:layout_marginEnd=\"16dp\"/>\n"
+        xml = xml + ind + "    <LinearLayout\n"
+        xml = xml + ind + "        android:layout_width=\"0dp\"\n"
+        xml = xml + ind + "        android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "        android:layout_weight=\"1\"\n"
+        xml = xml + ind + "        android:orientation=\"vertical\">\n"
+        xml = xml + ind + "        <TextView\n"
+        xml = xml + ind + "            android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "            android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "            android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "            android:textSize=\"15sp\"\n"
+        xml = xml + ind + "            android:textStyle=\"bold\"\n"
+        xml = xml + ind + "            android:textColor=\"#e6edf3\"/>\n"
+        if len(w.subtitle) > 0:
+            xml = xml + ind + "        <TextView\n"
+            xml = xml + ind + "            android:layout_width=\"wrap_content\"\n"
+            xml = xml + ind + "            android:layout_height=\"wrap_content\"\n"
+            xml = xml + ind + "            android:text=\"" + w.subtitle + "\"\n"
+            xml = xml + ind + "            android:textSize=\"13sp\"\n"
+            xml = xml + ind + "            android:textColor=\"#8b949e\"/>\n"
+        xml = xml + ind + "    </LinearLayout>\n"
+        xml = xml + ind + "</LinearLayout>"
+        return xml
+
+    // 16: Center -> FrameLayout with layout_gravity="center"
+    if k == 16:
+        let mut xml: string = ind + "<FrameLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:foregroundGravity=\"center\">\n"
+        let mut cti: int = 0
+        while cti < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[cti], depth + 1) + "\n"
+            cti = cti + 1
+        xml = xml + ind + "</FrameLayout>"
+        return xml
+
+    // 17: Link -> TextView styled as link
+    if k == 17:
+        let mut xml: string = ind + "<TextView\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "    android:textSize=\"" + str(w.font_size) + "sp\"\n"
+        xml = xml + ind + "    android:textColor=\"" + w.color + "\"\n"
+        xml = xml + ind + "    android:autoLink=\"web\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 18: Expanded -> FrameLayout with layout_weight
+    if k == 18:
+        let mut xml: string = ind + "<FrameLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"0dp\"\n"
+        xml = xml + ind + "    android:layout_weight=\"" + str(w.flex) + "\">\n"
+        let mut exi: int = 0
+        while exi < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[exi], depth + 1) + "\n"
+            exi = exi + 1
+        xml = xml + ind + "</FrameLayout>"
+        return xml
+
+    // 19: AppBar -> com.google.android.material.appbar.MaterialToolbar
+    if k == 19:
+        let mut xml: string = ind + "<com.google.android.material.appbar.MaterialToolbar\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"?attr/actionBarSize\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    app:title=\"" + w.text + "\"\n"
+        xml = xml + ind + "    app:titleTextColor=\"#e6edf3\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 20: BottomNavigationBar -> com.google.android.material.bottomnavigation.BottomNavigationView
+    if k == 20:
+        let mut xml: string = ind + "<com.google.android.material.bottomnavigation.BottomNavigationView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    app:itemTextColor=\"#8b949e\"\n"
+        xml = xml + ind + "    app:itemIconTint=\"#8b949e\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 21: TabItem -> com.google.android.material.tabs.TabItem
+    if k == 21:
+        let mut xml: string = ind + "<com.google.android.material.tabs.TabItem\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 22: FloatingActionButton -> com.google.android.material.floatingactionbutton.FloatingActionButton
+    if k == 22:
+        let mut xml: string = ind + "<com.google.android.material.floatingactionbutton.FloatingActionButton\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:backgroundTint=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    app:tint=\"#ffffff\"\n"
+        xml = xml + ind + "    android:contentDescription=\"" + w.icon_name + "\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 23: Dialog -> CardView container (Dialog style)
+    if k == 23:
+        let mut xml: string = ind + "<androidx.cardview.widget.CardView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    app:cardCornerRadius=\"14dp\"\n"
+        xml = xml + ind + "    app:cardBackgroundColor=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    app:cardElevation=\"16dp\"\n"
+        xml = xml + ind + ">\n"
+        let mut di: int = 0
+        while di < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[di], depth + 1) + "\n"
+            di = di + 1
+        xml = xml + ind + "</androidx.cardview.widget.CardView>"
+        return xml
+
+    // 24: SnackBar -> LinearLayout
+    if k == 24:
+        let mut xml: string = ind + "<LinearLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:orientation=\"horizontal\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    android:padding=\"12dp\"\n"
+        xml = xml + ind + ">\n"
+        xml = xml + ind + "    <TextView\n"
+        xml = xml + ind + "        android:layout_width=\"0dp\"\n"
+        xml = xml + ind + "        android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "        android:layout_weight=\"1\"\n"
+        xml = xml + ind + "        android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "        android:textColor=\"#f0f6fc\"/>\n"
+        if len(w.subtitle) > 0:
+            xml = xml + ind + "    <TextView\n"
+            xml = xml + ind + "        android:layout_width=\"wrap_content\"\n"
+            xml = xml + ind + "        android:layout_height=\"wrap_content\"\n"
+            xml = xml + ind + "        android:text=\"" + w.subtitle + "\"\n"
+            xml = xml + ind + "        android:textColor=\"#58a6ff\"/>\n"
+        xml = xml + ind + "</LinearLayout>"
+        return xml
+
+    // 25: Grid -> GridLayout
+    if k == 25:
+        let mut xml: string = ind + "<GridLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:columnCount=\"" + str(w.columns) + "\"\n"
+        xml = xml + ind + ">\n"
+        let mut gri: int = 0
+        while gri < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[gri], depth + 1) + "\n"
+            gri = gri + 1
+        xml = xml + ind + "</GridLayout>"
+        return xml
+
+    // 26: Wrap -> com.google.android.flexbox.FlexboxLayout
+    if k == 26:
+        let mut xml: string = ind + "<com.google.android.flexbox.FlexboxLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    app:flexWrap=\"wrap\"\n"
+        xml = xml + ind + "    app:alignItems=\"center\"\n"
+        xml = xml + ind + ">\n"
+        let mut wpi: int = 0
+        while wpi < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[wpi], depth + 1) + "\n"
+            wpi = wpi + 1
+        xml = xml + ind + "</com.google.android.flexbox.FlexboxLayout>"
+        return xml
+
+    // 27: Avatar -> CardView circular avatar
+    if k == 27:
+        let mut xml: string = ind + "<androidx.cardview.widget.CardView\n"
+        xml = xml + ind + "    android:layout_width=\"" + str(w.width) + "dp\"\n"
+        xml = xml + ind + "    android:layout_height=\"" + str(w.height) + "dp\"\n"
+        xml = xml + ind + "    app:cardCornerRadius=\"" + str(w.border_radius) + "dp\"\n"
+        xml = xml + ind + "    app:cardBackgroundColor=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + ">\n"
+        xml = xml + ind + "    <TextView\n"
+        xml = xml + ind + "        android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "        android:layout_height=\"match_parent\"\n"
+        xml = xml + ind + "        android:gravity=\"center\"\n"
+        xml = xml + ind + "        android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "        android:textColor=\"#ffffff\"\n"
+        xml = xml + ind + "        android:textStyle=\"bold\"/>\n"
+        xml = xml + ind + "</androidx.cardview.widget.CardView>"
+        return xml
+
+    // 28: Dropdown -> Spinner
+    if k == 28:
+        let mut xml: string = ind + "<Spinner\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:backgroundTint=\"" + w.color + "\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 29: Scaffold -> CoordinatorLayout
+    if k == 29:
+        let mut xml: string = ind + "<androidx.coordinatorlayout.widget.CoordinatorLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"match_parent\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + ">\n"
+        let mut sci: int = 0
+        while sci < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[sci], depth + 1) + "\n"
+            sci = sci + 1
+        xml = xml + ind + "</androidx.coordinatorlayout.widget.CoordinatorLayout>"
+        return xml
+
+    // 30: ScrollView -> NestedScrollView
+    if k == 30:
+        let mut xml: string = ind + "<androidx.core.widget.NestedScrollView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"match_parent\"\n"
+        xml = xml + ind + "    android:fillViewport=\"true\"\n"
+        xml = xml + ind + ">\n"
+        if len(w.children) > 0:
+            xml = xml + render_widget_to_android_xml(w.children[0], depth + 1) + "\n"
+        xml = xml + ind + "</androidx.core.widget.NestedScrollView>"
         return xml
 
     return ind + "<!-- Unsupported widget: " + str(k) + " -->"
