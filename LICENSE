@@ -1,0 +1,48 @@
+Cluster Community & Fair-Source License (CCFL v2.0 / Strict-Distribution)
+
+Copyright (c) 2026 Mohammad Zaid (zk-mohammad) / Cluster Organization
+Official Repository: https://github.com/cluster-lang/cluster-ui
+Author Account: https://github.com/zk-mohammad
+All rights reserved.
+
+1. PERMITTED INDEPENDENT, ACADEMIC & RESEARCH USE:
+Permission is hereby granted, free of charge, to any individual developer,
+freelance engineer, student, educator, academic researcher, non-profit
+organization, or open-source contributor to obtain, download, test, run, and
+build cross-platform user interfaces using this framework and associated
+documentation files (the "Software"), subject to the conditions herein.
+
+2. FRAMEWORK INTEGRITY, ANTI-TAMPERING & CANONICAL DISTRIBUTION:
+The Cluster UI framework, native widget engine, cross-platform exporters, and
+reactive micro-runtime belong exclusively to Mohammad Zaid (GitHub: zk-mohammad)
+and the official Cluster Organization (https://github.com/cluster-lang).
+
+To eliminate framework tampering, malicious widget injection, and ensure platform safety:
+- Modification, unauthorized binary re-distribution, rogue forks, and derivative
+  framework releases are STRICTLY PROHIBITED.
+- Exactly ONE canonical repository distribution exists, officially published under
+  https://github.com/cluster-lang/cluster-ui.
+- All duplicate copies, unauthorized forks, or third-party mirrors are strictly
+  INVALID and unauthorized.
+
+3. COMMERCIAL USE RESTRICTIONS:
+Any use of the Software, its component runtime, or exported applications by
+for-profit corporate entities or commercial enterprises for revenue-generating
+closed-source proprietary operations requires an explicit commercial license.
+
+Commercial licensing inquiries: zkalamgir@proton.me
+
+4. CONTRIBUTIONS & STRICT PURE CLUSTER MANDATE:
+All contributions to this repository must be 100% pure Cluster language code (.cl).
+External C/C++, Flutter, Swift, Dart, or JavaScript runtime dependencies are
+strictly forbidden. All UI elements, layout calculations, reactivity engines, and
+renderers must be built purely in Cluster.
+
+5. WARRANTY DISCLAIMER:
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -70,9 +70,9 @@ fn render_widget_to_html(w: Widget) -> string:
             box_style = box_style + " padding: " + str(w.padding) + "px;"
         if w.border_radius > 0:
             box_style = box_style + " border-radius: " + str(w.border_radius) + "px;"
-        if w.width > 0:
-            box_style = box_style + " width: " + str(w.width) + "px;"
-        if w.height > 0:
+        if w.width > 0 and w.width < 50000:
+            box_style = box_style + " width: " + str(w.width) + "px; flex-shrink: 0;"
+        if w.height > 0 and w.height < 50000:
             box_style = box_style + " height: " + str(w.height) + "px;"
 
         let mut b_children_html: string = ""

@@ -118,3 +118,19 @@ cl run examples/07_chat_messaging_app.cl
 # Universal 3-Platform Export (HTML + Android XML + iOS SwiftUI)
 cl run examples/08_multiplatform_export.cl
 ```
+
+---
+
+## 🤝 Contribution Guidelines (Pure Cluster Mandate)
+
+All contributions to `cluster-ui` are welcome under the following conditions:
+1. **100% Pure Cluster Code:** All widgets, renderers, animation primitives, state containers, and styling token systems must be implemented strictly in pure Cluster language (`.cl`).
+2. **Zero External Dependencies:** No external third-party runtime dependencies, npm packages, Flutter SDK, Dart, or Swift runtime code may be introduced.
+3. **Cross-Platform Compatibility:** New widgets should implement or extend the standard declarative interfaces for unified multi-target export (Web, Android, Apple).
+
+---
+
+## 📄 License
+
+Cluster Community & Fair-Source License (CCFL v2.0 / Strict-Distribution).  
+Copyright (c) 2026 Mohammad Zaid (zk-mohammad) / Cluster Organization. See [LICENSE](LICENSE) for details.

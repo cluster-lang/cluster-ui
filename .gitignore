@@ -1,7 +1,21 @@
+# ==============================================================================
+# Cluster UI: Git Ignore
+# ==============================================================================
+
+# External legacy / third-party framework trees
 flutter/
 swift/
 OpenSwiftUI/
+
+# Cache and IDE artifacts
+.cl_cache/
+.vscode/
+dist/
+build/
+
+# Binaries and system artifacts
 *.tmp
 *.o
 *.so
 bin/
+.DS_Store
