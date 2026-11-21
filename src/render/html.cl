@@ -321,6 +321,204 @@ fn render_widget_to_html(w: Widget) -> string:
             child_html = render_widget_to_html(w.children[0])
         return "<div style=\"" + sc_style + "\">" + child_html + "</div>"
 
+    // 31: Slider
+    if k == 31:
+        let mut ch_attr: string = ""
+        if len(w.on_change) > 0:
+            ch_attr = " oninput=\"" + w.on_change + "\""
+        let sl_style: string = "width: 100%; accent-color: " + w.color + "; cursor: pointer; height: 6px; border-radius: 3px;"
+        return "<input type=\"range\" min=\"" + str(w.min_value) + "\" max=\"" + str(w.max_value) + "\" value=\"" + str(w.value) + "\" style=\"" + sl_style + "\"" + ch_attr + " />"
+
+    // 32: Checkbox
+    if k == 32:
+        let mut chk_attr: string = ""
+        if w.is_checked:
+            chk_attr = " checked"
+        if len(w.on_click) > 0:
+            chk_attr = chk_attr + " onclick=\"" + w.on_click + "\""
+        let lbl_style: string = "display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #e6edf3; user-select: none;"
+        return "<label style=\"" + lbl_style + "\"><input type=\"checkbox\"" + chk_attr + " style=\"accent-color: " + w.color + "; width: 16px; height: 16px; cursor: pointer;\" /><span>" + w.text + "</span></label>"
+
+    // 33: Radio
+    if k == 33:
+        let mut sel_attr: string = ""
+        if w.is_checked:
+            sel_attr = " checked"
+        if len(w.on_click) > 0:
+            sel_attr = sel_attr + " onclick=\"" + w.on_click + "\""
+        let r_style: string = "display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #e6edf3; user-select: none;"
+        return "<label style=\"" + r_style + "\"><input type=\"radio\" value=\"" + w.value_str + "\"" + sel_attr + " style=\"accent-color: " + w.color + "; width: 16px; height: 16px; cursor: pointer;\" /><span>" + w.text + "</span></label>"
+
+    // 34: Chip
+    if k == 34:
+        let chip_style: string = "display: inline-flex; align-items: center; gap: 6px; background-color: " + w.bg_color + "; color: " + w.color + "; padding: 4px 12px; border-radius: " + str(w.border_radius) + "px; font-size: 13px; font-weight: 500; border: 1px solid #30363d;"
+        let mut del_btn: string = ""
+        if len(w.on_delete) > 0:
+            del_btn = "<span onclick=\"" + w.on_delete + "\" style=\"cursor: pointer; opacity: 0.7; font-weight: bold; margin-left: 4px;\">&times;</span>"
+        return "<div style=\"" + chip_style + "\"><span>" + w.text + "</span>" + del_btn + "</div>"
+
+    // 35: CircularProgressIndicator
+    if k == 35:
+        let sz: string = str(w.width) + "px"
+        let sp_style: string = "display: inline-block; width: " + sz + "; height: " + sz + "; border: " + str(w.border_width) + "px solid rgba(255,255,255,0.15); border-top-color: " + w.color + "; border-radius: 50%; animation: cl_spin 0.8s linear infinite;"
+        return "<div style=\"" + sp_style + "\"></div>"
+
+    // 36: Drawer
+    if k == 36:
+        let dr_style: string = "width: 280px; min-height: 100vh; background-color: " + w.bg_color + "; border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 16px; gap: 12px; box-sizing: border-box;"
+        let mut d_html: string = ""
+        let mut di: int = 0
+        while di < len(w.children):
+            d_html = d_html + render_widget_to_html(w.children[di])
+            di = di + 1
+        return "<aside style=\"" + dr_style + "\">" + d_html + "</aside>"
+
+    // 37: BottomSheet
+    if k == 37:
+        let bs_style: string = "position: fixed; bottom: 0; left: 0; right: 0; background-color: " + w.bg_color + "; border-top: 1px solid #30363d; border-radius: 16px 16px 0 0; padding: 24px; box-shadow: 0 -8px 24px rgba(0,0,0,0.5); z-index: 100;"
+        let mut bs_html: string = ""
+        if len(w.children) > 0:
+            bs_html = render_widget_to_html(w.children[0])
+        return "<div style=\"" + bs_style + "\"><div style=\"width: 40px; height: 4px; background-color: #484f58; border-radius: 2px; margin: 0 auto 16px auto;\"></div>" + bs_html + "</div>"
+
+    // 38: ExpansionTile / Accordion
+    if k == 38:
+        let mut op_attr: string = ""
+        if w.is_checked:
+            op_attr = " open"
+        let exp_style: string = "background-color: " + w.bg_color + "; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; color: #e6edf3;"
+        let mut body_h: string = ""
+        let mut ei: int = 0
+        while ei < len(w.children):
+            body_h = body_h + render_widget_to_html(w.children[ei])
+            ei = ei + 1
+        return "<details style=\"" + exp_style + "\"" + op_attr + "><summary style=\"cursor: pointer; font-weight: 600; outline: none;\">" + w.text + "</summary><div style=\"padding-top: 12px; display: flex; flex-direction: column; gap: 8px;\">" + body_h + "</div></details>"
+
+    // 39: Alert
+    if k == 39:
+        let al_style: string = "background-color: " + w.bg_color + "; border: 1px solid " + w.color + "; border-radius: 8px; padding: 12px 16px; color: " + w.color + "; font-size: 14px; display: flex; flex-direction: column; gap: 4px;"
+        let mut msg_h: string = ""
+        if len(w.subtitle) > 0:
+            msg_h = "<span style=\"color: #e6edf3; font-size: 13px; opacity: 0.9;\">" + w.subtitle + "</span>"
+        return "<div style=\"" + al_style + "\"><strong style=\"font-weight: 600;\">" + w.text + "</strong>" + msg_h + "</div>"
+
+    // 40: Icon
+    if k == 40:
+        return "<span style=\"font-size: " + str(w.font_size) + "px; color: " + w.color + "; display: inline-flex; align-items: center; justify-content: center;\">[" + w.icon_name + "]</span>"
+
+    // 41: Stepper
+    if k == 41:
+        let mut st_label: string = ""
+        if len(w.text) > 0:
+            st_label = "<span style=\"font-size: 13px; color: #e6edf3; margin-right: 4px;\">" + w.text + "</span>"
+        let st_box: string = "display: inline-flex; align-items: center; gap: 8px; background-color: " + w.bg_color + "; border: 1px solid #30363d; border-radius: 6px; padding: 4px 8px;"
+        let btn_st: string = "background-color: #21262d; border: 1px solid #30363d; color: #e6edf3; width: 26px; height: 26px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
+        return "<div style=\"" + st_box + "\">" + st_label + "<button style=\"" + btn_st + "\">-</button><span style=\"font-weight: 600; min-width: 24px; text-align: center; color: " + w.color + "; font-size: 14px;\">" + str(w.value) + "</span><button style=\"" + btn_st + "\">+</button></div>"
+
+    // 42: SegmentedButton
+    if k == 42:
+        let seg_wrap: string = "display: inline-flex; background-color: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 3px; gap: 2px;"
+        let mut seg_btns: string = ""
+        let mut si: int = 0
+        while si < len(w.options):
+            let mut opt_style: string = "border: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.15s ease;"
+            if si == w.active_index:
+                opt_style = opt_style + " background-color: #238636; color: #ffffff; font-weight: 600;"
+            else:
+                opt_style = opt_style + " background-color: transparent; color: #8b949e; font-weight: 400;"
+            seg_btns = seg_btns + "<button style=\"" + opt_style + "\">" + w.options[si] + "</button>"
+            si = si + 1
+        return "<div style=\"" + seg_wrap + "\">" + seg_btns + "</div>"
+
+    // 43: Tooltip
+    if k == 43:
+        let mut child_h: string = ""
+        if len(w.children) > 0:
+            child_h = render_widget_to_html(w.children[0])
+        return "<div style=\"position: relative; display: inline-block; cursor: help;\" title=\"" + w.text + "\">" + child_h + "</div>"
+
+    // 44: NavigationRail
+    if k == 44:
+        let nr_style: string = "width: " + str(w.width) + "px; min-height: 100vh; background-color: " + w.bg_color + "; border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 16px 10px; gap: 8px; box-sizing: border-box;"
+        let mut nr_items: string = ""
+        let mut nri: int = 0
+        while nri < len(w.children):
+            nr_items = nr_items + render_widget_to_html(w.children[nri])
+            nri = nri + 1
+        return "<nav style=\"" + nr_style + "\">" + nr_items + "</nav>"
+
+    // 45: DataTable
+    if k == 45:
+        let dt_wrap: string = "width: 100%; overflow-x: auto; border: 1px solid #30363d; border-radius: 8px; background-color: " + w.bg_color + ";"
+        let mut th_row: string = ""
+        let mut hi: int = 0
+        while hi < len(w.options):
+            th_row = th_row + "<th style=\"padding: 10px 14px; font-weight: 600; color: #8b949e; border-bottom: 1px solid #30363d; font-size: 13px;\">" + w.options[hi] + "</th>"
+            hi = hi + 1
+        let mut tb_rows: string = ""
+        let mut ri: int = 0
+        while ri < len(w.children):
+            let r_widget: Widget = w.children[ri]
+            tb_rows = tb_rows + "<tr style=\"border-bottom: 1px solid #21262d;\">"
+            let mut ci: int = 0
+            while ci < len(r_widget.children):
+                tb_rows = tb_rows + "<td style=\"padding: 10px 14px; font-size: 13px; color: #e6edf3;\">" + render_widget_to_html(r_widget.children[ci]) + "</td>"
+                ci = ci + 1
+            tb_rows = tb_rows + "</tr>"
+            ri = ri + 1
+        return "<div style=\"" + dt_wrap + "\"><table style=\"width: 100%; border-collapse: collapse; text-align: left;\"><thead><tr style=\"background-color: #21262d;\">" + th_row + "</tr></thead><tbody>" + tb_rows + "</tbody></table></div>"
+
+    // 46: Rating
+    if k == 46:
+        let mut stars: string = ""
+        let mut s_idx: int = 1
+        while s_idx <= w.max_value:
+            if s_idx <= w.value:
+                stars = stars + "<span style=\"color: " + w.color + ";\">&#9733;</span>"
+            else:
+                stars = stars + "<span style=\"color: #484f58;\">&#9734;</span>"
+            s_idx = s_idx + 1
+        return "<div style=\"display: inline-flex; gap: 3px; font-size: " + str(w.font_size) + "px; user-select: none;\">" + stars + "</div>"
+
+    // 47: Skeleton
+    if k == 47:
+        let sk_style: string = "width: " + str(w.width) + "px; height: " + str(w.height) + "px; border-radius: " + str(w.border_radius) + "px; background: linear-gradient(90deg, #21262d 25%, #30363d 50%, #21262d 75%); background-size: 200% 100%; animation: cl_shimmer 1.5s infinite;"
+        return "<div style=\"" + sk_style + "\"></div>"
+
+    // 48: Breadcrumbs
+    if k == 48:
+        let mut bc_items: string = ""
+        let mut bci: int = 0
+        let total_bc: int = len(w.options)
+        while bci < total_bc:
+            if bci > 0:
+                bc_items = bc_items + "<span style=\"color: #484f58; margin: 0 4px;\">/</span>"
+            if bci == total_bc - 1:
+                bc_items = bc_items + "<span style=\"color: #e6edf3; font-weight: 600;\">" + w.options[bci] + "</span>"
+            else:
+                bc_items = bc_items + "<span style=\"color: " + w.color + "; cursor: pointer;\">" + w.options[bci] + "</span>"
+            bci = bci + 1
+        return "<nav style=\"display: flex; align-items: center; gap: 4px; font-size: 13px; flex-wrap: wrap;\">" + bc_items + "</nav>"
+
+    // 49: CodeBlock
+    if k == 49:
+        let cb_wrap: string = "background-color: " + w.bg_color + "; border: 1px solid #30363d; border-radius: " + str(w.border_radius) + "px; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; width: 100%; box-sizing: border-box;"
+        let cb_bar: string = "display: flex; justify-content: space-between; align-items: center; background-color: #161b22; padding: 6px 12px; border-bottom: 1px solid #30363d; font-size: 11px; color: #8b949e; text-transform: uppercase;"
+        return "<div style=\"" + cb_wrap + "\"><div style=\"" + cb_bar + "\"><span>" + w.value_str + "</span><span style=\"cursor: pointer;\">Copy</span></div><pre style=\"padding: " + str(w.padding) + "px; margin: 0; overflow-x: auto; color: " + w.color + "; line-height: 1.5;\"><code>" + w.text + "</code></pre></div>"
+
+    // 50: MetricCard
+    if k == 50:
+        let mc_style: string = "background-color: " + w.bg_color + "; border: 1px solid #30363d; border-radius: " + str(w.border_radius) + "px; padding: " + str(w.padding) + "px; display: flex; flex-direction: column; gap: 8px; min-width: 180px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.25);"
+        let mut trend_h: string = ""
+        if len(w.subtitle) > 0:
+            let mut arr: string = "&#8595; "
+            let mut t_col: string = "#f85149"
+            if w.is_checked:
+                arr = "&#8593; "
+                t_col = "#3fb950"
+            trend_h = "<div style=\"display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: " + t_col + ";\"><span>" + arr + "</span><span>" + w.subtitle + "</span></div>"
+        return "<div style=\"" + mc_style + "\"><div style=\"display: flex; justify-content: space-between; align-items: center; color: #8b949e; font-size: 13px;\"><span>" + w.text + "</span><span style=\"color: " + w.color + "; font-size: 15px;\">[" + w.icon_name + "]</span></div><div style=\"font-size: 24px; font-weight: 700; color: #e6edf3;\">" + w.value_str + "</div>" + trend_h + "</div>"
+
     return ""
 
 fn render_page_html(title: string, root_widget: Widget) -> string:
@@ -331,6 +529,8 @@ fn render_page_html(title: string, root_widget: Widget) -> string:
     doc = doc + "    <style>\n"
     doc = doc + "        * { box-sizing: border-box; margin: 0; padding: 0; }\n"
     doc = doc + "        body { background-color: #0d1117; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }\n"
+    doc = doc + "        @keyframes cl_spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }\n"
+    doc = doc + "        @keyframes cl_shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }\n"
     doc = doc + "    </style>\n"
     doc = doc + "</head>\n<body>\n"
     doc = doc + render_widget_to_html(root_widget) + "\n"

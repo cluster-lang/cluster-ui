@@ -11,7 +11,11 @@ model Widget:
                           // 15:ListTile, 16:Center, 17:Link, 18:Expanded, 19:AppBar,
                           // 20:BottomNavigationBar, 21:TabItem, 22:FloatingActionButton,
                           // 23:Dialog, 24:SnackBar, 25:Grid, 26:Wrap, 27:Avatar, 28:Dropdown,
-                          // 29:Scaffold, 30:ScrollView
+                          // 29:Scaffold, 30:ScrollView, 31:Slider, 32:Checkbox, 33:Radio,
+                          // 34:Chip, 35:CircularProgressIndicator, 36:Drawer, 37:BottomSheet,
+                          // 38:ExpansionTile, 39:Alert, 40:Icon, 41:Stepper, 42:SegmentedButton,
+                          // 43:Tooltip, 44:NavigationRail, 45:DataTable, 46:Rating, 47:Skeleton,
+                          // 48:Breadcrumbs, 49:CodeBlock, 50:MetricCard
     id: string
     text: string
     font_size: int
@@ -33,6 +37,11 @@ model Widget:
     subtitle: string
     icon_name: string
     value: int
+    min_value: int
+    max_value: int
+    on_change: string
+    on_delete: string
+    value_str: string
     is_checked: bool
     shadow: bool
     align: string
@@ -71,6 +80,11 @@ fn new_widget(kind: int) -> Widget:
         subtitle = "",
         icon_name = "",
         value = 0,
+        min_value = 0,
+        max_value = 100,
+        on_change = "",
+        on_delete = "",
+        value_str = "",
         is_checked = false,
         shadow = false,
         align = "",
@@ -235,6 +249,9 @@ fn Box(child: Widget, width: int = 0, height: int = 0, padding: int = 0, bg_colo
     w.border_radius = border_radius
     return w
 
+fn Container(child: Widget, width: int = 0, height: int = 0, padding: int = 0, bg_color: string = "", border_radius: int = 0) -> Widget:
+    return Box(child, width, height, padding, bg_color, border_radius)
+
 // Center (Flutter Center / SwiftUI center frame)
 fn Center(child: Widget) -> Widget:
     let mut w: Widget = new_widget(16)
@@ -388,4 +405,225 @@ fn ScrollView(child: Widget, is_horizontal: bool = false) -> Widget:
     let mut ch: vector[Widget] = []
     ch.push(child)
     w.children = ch
+    return w
+
+// --- Advanced Interactive & Feedback Widgets (31-40) ---
+
+// 31: Slider (Flutter Slider / SwiftUI Slider)
+fn Slider(value: int = 50, min_value: int = 0, max_value: int = 100, on_change: string = "") -> Widget:
+    let mut w: Widget = new_widget(31)
+    w.value = value
+    w.min_value = min_value
+    w.max_value = max_value
+    w.on_change = on_change
+    w.color = "#238636"
+    return w
+
+// 32: Checkbox (Flutter Checkbox / SwiftUI Toggle checkbox style)
+fn Checkbox(is_checked: bool = false, label: string = "", on_click: string = "") -> Widget:
+    let mut w: Widget = new_widget(32)
+    w.is_checked = is_checked
+    w.text = label
+    w.on_click = on_click
+    w.color = "#238636"
+    return w
+
+// 33: Radio (Flutter Radio / SwiftUI Picker radio style)
+fn Radio(is_selected: bool = false, label: string = "", value_str: string = "", on_click: string = "") -> Widget:
+    let mut w: Widget = new_widget(33)
+    w.is_checked = is_selected
+    w.text = label
+    w.value_str = value_str
+    w.on_click = on_click
+    w.color = "#238636"
+    return w
+
+// 34: Chip (Flutter Chip / SwiftUI Label Capsule)
+fn Chip(label: string, icon_name: string = "", on_delete: string = "", bg_color: string = "#21262d") -> Widget:
+    let mut w: Widget = new_widget(34)
+    w.text = label
+    w.icon_name = icon_name
+    w.on_delete = on_delete
+    w.bg_color = bg_color
+    w.color = "#e6edf3"
+    w.border_radius = 16
+    return w
+
+// 35: CircularProgressIndicator (Flutter CircularProgressIndicator / SwiftUI ProgressView)
+fn CircularProgressIndicator(size: int = 32, color: string = "#58a6ff", border_width: int = 3) -> Widget:
+    let mut w: Widget = new_widget(35)
+    w.width = size
+    w.height = size
+    w.color = color
+    w.border_width = border_width
+    return w
+
+// 36: Drawer (Flutter Drawer / SwiftUI NavigationSplitView)
+fn Drawer(header: Widget, items: vector[Widget], bg_color: string = "#161b22") -> Widget:
+    let mut w: Widget = new_widget(36)
+    w.bg_color = bg_color
+    let mut ch: vector[Widget] = []
+    ch.push(header)
+    let mut i: int = 0
+    while i < len(items):
+        ch.push(items[i])
+        i = i + 1
+    w.children = ch
+    return w
+
+// 37: BottomSheet (Flutter showModalBottomSheet / SwiftUI .sheet)
+fn BottomSheet(child: Widget, is_open: bool = true, on_close: string = "", bg_color: string = "#161b22") -> Widget:
+    let mut w: Widget = new_widget(37)
+    w.is_checked = is_open
+    w.on_click = on_close
+    w.bg_color = bg_color
+    let mut ch: vector[Widget] = []
+    ch.push(child)
+    w.children = ch
+    return w
+
+// 38: ExpansionTile / Accordion (Flutter ExpansionTile / SwiftUI DisclosureGroup)
+fn ExpansionTile(title: string, children: vector[Widget], is_expanded: bool = false) -> Widget:
+    let mut w: Widget = new_widget(38)
+    w.text = title
+    w.is_checked = is_expanded
+    w.children = children
+    w.bg_color = "#161b22"
+    return w
+
+// 39: Alert (Flutter AlertDialog/Banner / SwiftUI Banner)
+fn Alert(title: string, message: string = "", severity: string = "info") -> Widget:
+    let mut w: Widget = new_widget(39)
+    w.text = title
+    w.subtitle = message
+    w.value_str = severity
+    if severity == "success":
+        w.bg_color = "#1a4627"
+        w.color = "#3fb950"
+    elif severity == "warning":
+        w.bg_color = "#4d3800"
+        w.color = "#d29922"
+    elif severity == "error":
+        w.bg_color = "#490202"
+        w.color = "#f85149"
+    else:
+        w.bg_color = "#162033"
+        w.color = "#58a6ff"
+    w.border_radius = 8
+    w.padding = 12
+    return w
+
+// 40: Icon (Flutter Icon / SwiftUI Image(systemName:))
+fn Icon(name: string, size: int = 20, color: string = "#8b949e") -> Widget:
+    let mut w: Widget = new_widget(40)
+    w.icon_name = name
+    w.font_size = size
+    w.color = color
+    return w
+
+// --- Phase 4 Advanced Enterprise & Productivity Widgets (41-50) ---
+
+// 41: Stepper (Flutter Stepper / SwiftUI Stepper)
+fn Stepper(label: string = "", value: int = 1, min_value: int = 0, max_value: int = 100, on_change: string = "") -> Widget:
+    let mut w: Widget = new_widget(41)
+    w.text = label
+    w.value = value
+    w.min_value = min_value
+    w.max_value = max_value
+    w.on_change = on_change
+    w.color = "#58a6ff"
+    w.bg_color = "#161b22"
+    return w
+
+// 42: SegmentedButton (Flutter SegmentedButton / SwiftUI Picker.segmented)
+fn SegmentedButton(options: vector[string], active_index: int = 0, on_click: string = "") -> Widget:
+    let mut w: Widget = new_widget(42)
+    w.options = options
+    w.active_index = active_index
+    w.on_click = on_click
+    w.color = "#58a6ff"
+    w.bg_color = "#21262d"
+    return w
+
+// 43: Tooltip (Flutter Tooltip / SwiftUI .help)
+fn Tooltip(message: string, child: Widget) -> Widget:
+    let mut w: Widget = new_widget(43)
+    w.text = message
+    let mut ch: vector[Widget] = []
+    ch.push(child)
+    w.children = ch
+    return w
+
+// 44: NavigationRail (Flutter NavigationRail / SwiftUI Sidebar)
+fn NavigationRail(header: Widget, items: vector[Widget], active_index: int = 0, width: int = 220, bg_color: string = "#161b22") -> Widget:
+    let mut w: Widget = new_widget(44)
+    w.active_index = active_index
+    w.width = width
+    w.bg_color = bg_color
+    let mut ch: vector[Widget] = []
+    ch.push(header)
+    let mut i: int = 0
+    while i < len(items):
+        ch.push(items[i])
+        i = i + 1
+    w.children = ch
+    return w
+
+// 45: DataTable (Flutter DataTable / HTML Table / SwiftUI Table)
+fn DataTable(headers: vector[string], rows: vector[Widget], bg_color: string = "#161b22") -> Widget:
+    let mut w: Widget = new_widget(45)
+    w.options = headers
+    w.children = rows
+    w.bg_color = bg_color
+    w.border_color = "#30363d"
+    return w
+
+// 46: Rating (Flutter RatingBar / SwiftUI Star Rating)
+fn Rating(value: int = 5, max_value: int = 5, color: string = "#f1e05a", font_size: int = 18) -> Widget:
+    let mut w: Widget = new_widget(46)
+    w.value = value
+    w.max_value = max_value
+    w.color = color
+    w.font_size = font_size
+    return w
+
+// 47: Skeleton (Flutter Skeleton/Shimmer / SwiftUI Redacted Placeholder)
+fn Skeleton(width: int = 120, height: int = 20, border_radius: int = 4, bg_color: string = "#21262d") -> Widget:
+    let mut w: Widget = new_widget(47)
+    w.width = width
+    w.height = height
+    w.border_radius = border_radius
+    w.bg_color = bg_color
+    return w
+
+// 48: Breadcrumbs (Flutter / SwiftUI / Web Navigation Path)
+fn Breadcrumbs(items: vector[string], color: string = "#58a6ff") -> Widget:
+    let mut w: Widget = new_widget(48)
+    w.options = items
+    w.color = color
+    return w
+
+// 49: CodeBlock (Flutter HighlightView / SwiftUI Monospaced Code Box)
+fn CodeBlock(code: string, language: string = "cluster", bg_color: string = "#0d1117") -> Widget:
+    let mut w: Widget = new_widget(49)
+    w.text = code
+    w.value_str = language
+    w.bg_color = bg_color
+    w.color = "#e6edf3"
+    w.border_radius = 8
+    w.padding = 12
+    return w
+
+// 50: MetricCard (Flutter KPI Card / SwiftUI Health Stat View)
+fn MetricCard(title: string, value: string, delta: string = "", is_positive: bool = true, icon_name: string = "activity", color: string = "#58a6ff") -> Widget:
+    let mut w: Widget = new_widget(50)
+    w.text = title
+    w.value_str = value
+    w.subtitle = delta
+    w.is_checked = is_positive
+    w.icon_name = icon_name
+    w.color = color
+    w.bg_color = "#161b22"
+    w.border_radius = 10
+    w.padding = 16
     return w
