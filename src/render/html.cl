@@ -14,11 +14,28 @@ fn render_widget_to_html(w: Widget) -> string:
         let mut style: string = "font-size: " + str(w.font_size) + "px; color: " + w.color + ";"
         if w.bold:
             style = style + " font-weight: 600;"
-        return "<span style=\"" + style + "\">" + w.text + "</span>"
+        if w.is_animated:
+            style = style + " transition: all " + str(w.anim_duration) + "ms " + w.anim_curve + "; will-change: transform, opacity;"
+        let mut bind_attr: string = ""
+        let mut display_text: string = w.text
+        if len(w.bind_key) > 0:
+            bind_attr = " data-bind=\"" + w.bind_key + "\""
+        elif len(w.text) > 10:
+            if substring(w.text, 0, 8) == "{{state:":
+                let tlen: int = len(w.text)
+                if substring(w.text, tlen - 2, 2) == "}}":
+                    let bkey: string = substring(w.text, 8, tlen - 10)
+                    bind_attr = " data-bind=\"" + bkey + "\""
+                    display_text = "0"
+        return "<span" + bind_attr + " style=\"" + style + "\">" + display_text + "</span>"
 
     // 2: Button
     if k == 2:
-        let mut btn_style: string = "background-color: " + w.bg_color + "; color: " + w.color + "; padding: " + str(w.padding) + "px 16px; border-radius: " + str(w.border_radius) + "px; font-size: " + str(w.font_size) + "px; border: none; cursor: pointer; font-weight: 600; transition: all 0.15s ease;"
+        let mut btn_style: string = "background-color: " + w.bg_color + "; color: " + w.color + "; padding: " + str(w.padding) + "px 16px; border-radius: " + str(w.border_radius) + "px; font-size: " + str(w.font_size) + "px; border: none; cursor: pointer; font-weight: 600;"
+        if w.is_animated:
+            btn_style = btn_style + " transition: all " + str(w.anim_duration) + "ms " + w.anim_curve + "; will-change: transform, box-shadow;"
+        else:
+            btn_style = btn_style + " transition: all 0.15s ease;"
         let mut click_attr: string = ""
         if len(w.on_click) > 0:
             click_attr = " onclick=\"" + w.on_click + "\""
@@ -103,7 +120,9 @@ fn render_widget_to_html(w: Widget) -> string:
 
     // 11: Card
     if k == 11:
-        let card_style: string = "box-sizing: border-box; background-color: " + w.bg_color + "; border-radius: " + str(w.border_radius) + "px; padding: " + str(w.padding) + "px; box-shadow: 0 4px 14px rgba(0,0,0,0.35); border: 1px solid #30363d;"
+        let mut card_style: string = "box-sizing: border-box; background-color: " + w.bg_color + "; border-radius: " + str(w.border_radius) + "px; padding: " + str(w.padding) + "px; box-shadow: 0 4px 14px rgba(0,0,0,0.35); border: 1px solid #30363d;"
+        if w.is_animated:
+            card_style = card_style + " transition: all " + str(w.anim_duration) + "ms " + w.anim_curve + "; will-change: transform, box-shadow;"
         let mut card_ch: string = ""
         let mut ci: int = 0
         while ci < len(w.children):
@@ -534,5 +553,25 @@ fn render_page_html(title: string, root_widget: Widget) -> string:
     doc = doc + "    </style>\n"
     doc = doc + "</head>\n<body>\n"
     doc = doc + render_widget_to_html(root_widget) + "\n"
+    doc = doc + "<script>\n"
+    doc = doc + "window.Cluster = {\n"
+    doc = doc + "    state: {},\n"
+    doc = doc + "    get: function(k) { return this.state[k] || 0; },\n"
+    doc = doc + "    set: function(k, v) {\n"
+    doc = doc + "        this.state[k] = v;\n"
+    doc = doc + "        var els = document.querySelectorAll('[data-bind=\"' + k + '\"]');\n"
+    doc = doc + "        for (var i = 0; i < els.length; i++) {\n"
+    doc = doc + "            if (els[i].tagName === 'INPUT' || els[i].tagName === 'SELECT') els[i].value = v;\n"
+    doc = doc + "            else els[i].innerText = v;\n"
+    doc = doc + "        }\n"
+    doc = doc + "    },\n"
+    doc = doc + "    dispatch: function(action, payload) {\n"
+    doc = doc + "        if (window.__cluster_reducer) {\n"
+    doc = doc + "            window.__cluster_reducer(this.state, action, payload);\n"
+    doc = doc + "            for (var k in this.state) { this.set(k, this.state[k]); }\n"
+    doc = doc + "        }\n"
+    doc = doc + "    }\n"
+    doc = doc + "};\n"
+    doc = doc + "</script>\n"
     doc = doc + "</body>\n</html>"
     return doc
