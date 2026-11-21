@@ -67,32 +67,14 @@ fn build_chat_app() -> Widget:
     return Column(app_children, 0)
 
 fn main() -> int:
-    pln("==================================================")
-    pln(" Cluster UI Showcase: Modern Chat App")
-    pln(" Multi-Platform: HTML5 + Android Jetpack XML")
-    pln("==================================================")
-
     let app: Widget = build_chat_app()
 
-    // 1. Generate Web HTML
+    // 1. Generate Web HTML (Rendered Live on Port 8080)
     let html: string = render_page_html("Chat with Sarah - Cluster UI", app)
-    pln("\n[1] Generated HTML5 Length: " + str(len(html)) + " bytes")
+    pln(html)
 
-    // 2. Generate Android Layout XML
+    // 2. Generate Native Android Layout XML
     let xml: string = render_activity_layout_xml(app)
-    pln("[2] Generated Android XML Length: " + str(len(xml)) + " bytes")
+    pln("\n<!-- ANDROID XML EXPORT -->\n" + xml)
 
-    pln("\n--- Sample Android XML (First 400 chars) ---")
-    let mut preview: string = ""
-    let mut i: int = 0
-    let max_len: int = 400
-    if len(xml) < 400:
-        max_len = len(xml)
-    while i < max_len:
-        preview = preview + xml[i]
-        i = i + 1
-    pln(preview)
-    pln("...\n")
-
-    pln("✅ Chat App generated successfully!")
     return 0

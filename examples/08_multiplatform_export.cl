@@ -53,35 +53,18 @@ fn build_profile_screen() -> Widget:
     return Scaffold(top_bar, scroll_body, bottom_nav, fab, "#0d1117")
 
 fn main() -> int:
-    pln("==================================================")
-    pln(" Cluster UI: 1 Codebase -> 3 Native Platforms")
-    pln("==================================================")
-
     let screen: Widget = build_profile_screen()
 
-    // 1. Web HTML
+    // 1. Web HTML (Rendered Live on Port 8080)
     let html: string = render_page_html("Universal Settings - Cluster UI", screen)
-    pln("[1] HTML5 Output: " + str(len(html)) + " bytes")
+    pln(html)
 
-    // 2. Android XML
+    // 2. Native Android Layout XML
     let xml: string = render_activity_layout_xml(screen)
-    pln("[2] Android XML Output: " + str(len(xml)) + " bytes")
+    pln("\n<!-- ANDROID XML EXPORT -->\n" + xml)
 
-    // 3. Apple SwiftUI
+    // 3. Native Apple SwiftUI View
     let swift: string = render_swiftui_view("ProfileSettingsView", screen)
-    pln("[3] Apple SwiftUI Output: " + str(len(swift)) + " bytes")
+    pln("\n// APPLE SWIFTUI EXPORT\n" + swift)
 
-    pln("\n--- Sample SwiftUI View Code (First 400 chars) ---")
-    let mut preview: string = ""
-    let mut i: int = 0
-    let max_len: int = 400
-    if len(swift) < 400:
-        max_len = len(swift)
-    while i < max_len:
-        preview = preview + swift[i]
-        i = i + 1
-    pln(preview)
-    pln("...\n")
-
-    pln("✅ Multi-platform compilation verified with 100% success!")
     return 0
