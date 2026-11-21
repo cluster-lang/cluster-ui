@@ -538,6 +538,10 @@ fn render_widget_to_html(w: Widget) -> string:
             trend_h = "<div style=\"display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: " + t_col + ";\"><span>" + arr + "</span><span>" + w.subtitle + "</span></div>"
         return "<div style=\"" + mc_style + "\"><div style=\"display: flex; justify-content: space-between; align-items: center; color: #8b949e; font-size: 13px;\"><span>" + w.text + "</span><span style=\"color: " + w.color + "; font-size: 15px;\">[" + w.icon_name + "]</span></div><div style=\"font-size: 24px; font-weight: 700; color: #e6edf3;\">" + w.value_str + "</div>" + trend_h + "</div>"
 
+    // 51: RawHtml / Custom Component
+    if k == 51:
+        return w.text
+
     return ""
 
 fn render_page_html(title: string, root_widget: Widget) -> string:

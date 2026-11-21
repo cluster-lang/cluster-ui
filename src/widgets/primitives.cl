@@ -86,3 +86,9 @@ fn Icon(name: string, size: int = 20, color: string = "#8b949e") -> Widget:
     w.font_size = size
     w.color = color
     return w
+
+// RawHtml / Custom Component (Flutter HtmlElementView / SwiftUI UIViewRepresentable)
+fn RawHtml(html_content: string) -> Widget:
+    let mut w: Widget = new_widget(51)
+    w.text = html_content
+    return w
