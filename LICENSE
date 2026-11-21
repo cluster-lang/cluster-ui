@@ -11,6 +11,10 @@ freelance engineer, student, educator, academic researcher, non-profit
 organization, or open-source contributor to obtain, download, test, run, and
 build cross-platform user interfaces using this framework and associated
 documentation files (the "Software"), subject to the conditions herein.
+Any modification, alteration, patching, decompilation, or derivative compilation
+of the Software (including for academic, educational, or research purposes) strictly
+requires prior written permission and explicit authorization from the copyright holder.
+
 
 2. FRAMEWORK INTEGRITY, ANTI-TAMPERING & CANONICAL DISTRIBUTION:
 The Cluster UI framework, native widget engine, cross-platform exporters, and
