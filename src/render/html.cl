@@ -538,8 +538,194 @@ fn render_widget_to_html(w: Widget) -> string:
             trend_h = "<div style=\"display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: " + t_col + ";\"><span>" + arr + "</span><span>" + w.subtitle + "</span></div>"
         return "<div style=\"" + mc_style + "\"><div style=\"display: flex; justify-content: space-between; align-items: center; color: #8b949e; font-size: 13px;\"><span>" + w.text + "</span><span style=\"color: " + w.color + "; font-size: 15px;\">[" + w.icon_name + "]</span></div><div style=\"font-size: 24px; font-weight: 700; color: #e6edf3;\">" + w.value_str + "</div>" + trend_h + "</div>"
 
-    // 51: RawHtml / Custom Component
+    // 51: CupertinoButton (Apple iOS)
     if k == 51:
+        let mut cb_style: string = "border-radius: " + str(w.border_radius) + "px; font-size: " + str(w.font_size) + "px; font-weight: 600; cursor: pointer; padding: " + str(w.padding) + "px 20px; border: none; font-family: -apple-system, BlinkMacSystemFont, sans-serif; transition: opacity 0.15s ease;"
+        if w.is_checked:
+            cb_style = cb_style + " background-color: " + w.bg_color + "; color: #ffffff;"
+        else:
+            cb_style = cb_style + " background-color: transparent; color: " + w.bg_color + ";"
+        let mut click_attr: string = ""
+        if len(w.on_click) > 0: click_attr = " onclick=\"" + w.on_click + "\""
+        return "<button style=\"" + cb_style + "\"" + click_attr + ">" + w.text + "</button>"
+
+    // 52: CupertinoNavigationBar (Apple iOS Frosted Glass)
+    if k == 52:
+        let nb_style: string = "display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: " + w.bg_color + "; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.12); width: 100%; box-sizing: border-box;"
+        let mut lead: string = ""
+        let mut trail: string = ""
+        if len(w.children) > 0: lead = render_widget_to_html(w.children[0])
+        if len(w.children) > 1: trail = render_widget_to_html(w.children[1])
+        return "<div style=\"" + nb_style + "\"><div>" + lead + "</div><span style=\"font-weight: 600; font-size: 17px; color: #ffffff;\">" + w.text + "</span><div>" + trail + "</div></div>"
+
+    // 53: CupertinoTabBar (Apple iOS Tab Bar)
+    if k == 53:
+        let tb_style: string = "display: flex; justify-content: space-around; align-items: center; padding: 8px 16px; background: " + w.bg_color + "; backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.12); width: 100%; box-sizing: border-box;"
+        let mut tb_items: string = ""
+        let mut idx: int = 0
+        while idx < len(w.children):
+            tb_items = tb_items + render_widget_to_html(w.children[idx])
+            idx = idx + 1
+        return "<div style=\"" + tb_style + "\">" + tb_items + "</div>"
+
+    // 54: CupertinoActionSheet (Apple iOS Action Sheet)
+    if k == 54:
+        let as_wrap: string = "display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 400px; margin: 0 auto; box-sizing: border-box;"
+        let as_box: string = "background: " + w.bg_color + "; border-radius: " + str(w.border_radius) + "px; overflow: hidden; display: flex; flex-direction: column; text-align: center;"
+        let as_head: string = "<div style=\"padding: 14px; border-bottom: 1px solid #2c2c2e;\"><div style=\"font-weight: 600; font-size: 15px; color: #ffffff;\">" + w.text + "</div><div style=\"font-size: 13px; color: #8e8e93; margin-top: 4px;\">" + w.subtitle + "</div></div>"
+        let mut acts: string = ""
+        let mut i_act: int = 0
+        while i_act < len(w.children):
+            acts = acts + "<div style=\"padding: 14px; border-bottom: 1px solid #2c2c2e;\">" + render_widget_to_html(w.children[i_act]) + "</div>"
+            i_act = i_act + 1
+        let cancel_btn: string = "<button style=\"background: #1c1c1e; color: #007AFF; font-weight: 600; font-size: 17px; padding: 16px; border-radius: " + str(w.border_radius) + "px; border: none; cursor: pointer;\">" + w.value_str + "</button>"
+        return "<div style=\"" + as_wrap + "\"><div style=\"" + as_box + "\">" + as_head + acts + "</div>" + cancel_btn + "</div>"
+
+    // 55: CupertinoSwitch (Apple iOS Fluid Toggle)
+    if k == 55:
+        let mut bg: string = "#34C759"
+        let mut left: string = "22px"
+        if not w.is_checked:
+            bg = "#39393d"
+            left = "2px"
+        let sw_outer: string = "width: 51px; height: 31px; border-radius: 31px; background: " + bg + "; position: relative; cursor: pointer; transition: background 0.25s ease;"
+        let sw_knob: string = "width: 27px; height: 27px; border-radius: 27px; background: #ffffff; position: absolute; top: 2px; left: " + left + "; transition: left 0.25s ease; box-shadow: 0 3px 8px rgba(0,0,0,0.3);"
+        return "<div style=\"" + sw_outer + "\"><div style=\"" + sw_knob + "\"></div></div>"
+
+    // 56: CupertinoPicker (Apple iOS Wheel Picker)
+    if k == 56:
+        let pk_style: string = "background: " + w.bg_color + "; height: " + str(w.height) + "px; border-radius: 12px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 12px; gap: 8px; box-sizing: border-box;"
+        let mut pk_opts: string = ""
+        let mut p_idx: int = 0
+        while p_idx < len(w.options):
+            let mut o_col: string = "#8e8e93"
+            let mut o_weight: string = "normal"
+            if p_idx == w.active_index:
+                o_col = "#ffffff"
+                o_weight = "bold"
+            pk_opts = pk_opts + "<div style=\"color: " + o_col + "; font-size: 18px; font-weight: " + o_weight + "; padding: 6px 0; cursor: pointer;\">" + w.options[p_idx] + "</div>"
+            p_idx = p_idx + 1
+        return "<div style=\"" + pk_style + "\">" + pk_opts + "</div>"
+
+    // 57: CupertinoSegmentedControl (Apple iOS Pill Segment)
+    if k == 57:
+        let sc_wrap: string = "display: inline-flex; background: rgba(118, 118, 128, 0.24); border-radius: " + str(w.border_radius) + "px; padding: 2px; gap: 2px; box-sizing: border-box;"
+        let mut sc_items: string = ""
+        let mut sc_i: int = 0
+        while sc_i < len(w.options):
+            let mut item_bg: string = "transparent"
+            let mut item_col: string = "#ffffff"
+            let mut item_sh: string = "none"
+            if sc_i == w.active_index:
+                item_bg = "#636366"
+                item_sh = "0 2px 4px rgba(0,0,0,0.3)"
+            sc_items = sc_items + "<div style=\"padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; color: " + item_col + "; background: " + item_bg + "; box-shadow: " + item_sh + "; cursor: pointer;\">" + w.options[sc_i] + "</div>"
+            sc_i = sc_i + 1
+        return "<div style=\"" + sc_wrap + "\">" + sc_items + "</div>"
+
+    // 58: FilledButton (Flutter Material 3)
+    if k == 58:
+        let fb_style: string = "background-color: " + w.bg_color + "; color: " + w.color + "; padding: " + str(w.padding) + "px 24px; border-radius: " + str(w.border_radius) + "px; font-size: " + str(w.font_size) + "px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: all 0.2s ease;"
+        return "<button style=\"" + fb_style + "\">" + w.text + "</button>"
+
+    // 59: OutlinedButton (Flutter Material 3)
+    if k == 59:
+        let ob_style: string = "background-color: transparent; color: " + w.color + "; border: " + str(w.border_width) + "px solid " + w.border_color + "; padding: " + str(w.padding) + "px 24px; border-radius: " + str(w.border_radius) + "px; font-size: " + str(w.font_size) + "px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
+        return "<button style=\"" + ob_style + "\">" + w.text + "</button>"
+
+    // 60: TextButton (Flutter Material 3)
+    if k == 60:
+        let tb_style: string = "background-color: transparent; color: " + w.color + "; border: none; padding: " + str(w.padding) + "px 16px; border-radius: 20px; font-size: " + str(w.font_size) + "px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
+        return "<button style=\"" + tb_style + "\">" + w.text + "</button>"
+
+    // 61: FabExtended (Flutter Material 3 Extended FAB)
+    if k == 61:
+        let fab_style: string = "display: inline-flex; align-items: center; gap: 12px; background-color: " + w.bg_color + "; color: " + w.color + "; padding: 0 " + str(w.padding) + "px; height: " + str(w.height) + "px; border-radius: " + str(w.border_radius) + "px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.35); transition: all 0.2s ease;"
+        return "<button style=\"" + fab_style + "\"><span>+" + w.icon_name + "</span><span>" + w.text + "</span></button>"
+
+    // 62: SearchBar (Flutter Material 3 Search Bar)
+    if k == 62:
+        let sb_style: string = "display: flex; align-items: center; gap: 12px; background-color: " + w.bg_color + "; color: " + w.color + "; padding: 0 " + str(w.padding) + "px; height: " + str(w.height) + "px; border-radius: " + str(w.border_radius) + "px; width: 100%; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.25);"
+        return "<div style=\"" + sb_style + "\"><span style=\"color: #8b949e;\">🔍</span><input type=\"text\" placeholder=\"" + w.placeholder + "\" style=\"background: transparent; border: none; color: #ffffff; font-size: 15px; outline: none; width: 100%;\" /></div>"
+
+    // 63: FilterChip (Flutter Material 3 Filter Chip)
+    if k == 63:
+        let mut fc_bg: string = w.bg_color
+        let mut check: string = ""
+        if w.is_checked:
+            fc_bg = "#4f378b"
+            check = "✓ "
+        let fc_style: string = "display: inline-flex; align-items: center; gap: 6px; background-color: " + fc_bg + "; color: " + w.color + "; border: 1px solid #49454f; border-radius: " + str(w.border_radius) + "px; padding: " + str(w.padding) + "px 14px; font-size: 13px; font-weight: 500; cursor: pointer;"
+        return "<div style=\"" + fc_style + "\"><span>" + check + w.text + "</span></div>"
+
+    // 64: NavigationDrawer (Flutter Material 3 Navigation Drawer)
+    if k == 64:
+        let nd_style: string = "display: flex; flex-direction: column; width: " + str(w.width) + "px; background-color: " + w.bg_color + "; border-radius: 0 16px 16px 0; padding: 16px; gap: 8px; box-sizing: border-box; min-height: 100vh;"
+        let mut nd_items: string = ""
+        let mut nd_i: int = 0
+        while nd_i < len(w.children):
+            nd_items = nd_items + render_widget_to_html(w.children[nd_i])
+            nd_i = nd_i + 1
+        return "<div style=\"" + nd_style + "\">" + nd_items + "</div>"
+
+    // 65: Form (SwiftUI Form)
+    if k == 65:
+        let form_style: string = "display: flex; flex-direction: column; gap: 16px; width: 100%; padding: " + str(w.padding) + "px; background-color: " + w.bg_color + "; box-sizing: border-box;"
+        let mut f_ch: string = ""
+        let mut f_i: int = 0
+        while f_i < len(w.children):
+            f_ch = f_ch + render_widget_to_html(w.children[f_i])
+            f_i = f_i + 1
+        return "<form style=\"" + form_style + "\">" + f_ch + "</form>"
+
+    // 66: Section (SwiftUI Section)
+    if k == 66:
+        let sec_style: string = "display: flex; flex-direction: column; gap: 8px; background-color: " + w.bg_color + "; border-radius: " + str(w.border_radius) + "px; padding: " + str(w.padding) + "px; width: 100%; box-sizing: border-box;"
+        let head: string = "<div style=\"font-size: 12px; color: #8e8e93; text-transform: uppercase; font-weight: 600; padding-left: 4px;\">" + w.text + "</div>"
+        let mut s_ch: string = ""
+        let mut s_i: int = 0
+        while s_i < len(w.children):
+            s_ch = s_ch + render_widget_to_html(w.children[s_i])
+            s_i = s_i + 1
+        return "<div style=\"" + sec_style + "\">" + head + s_ch + "</div>"
+
+    // 67: List (SwiftUI List)
+    if k == 67:
+        let list_style: string = "display: flex; flex-direction: column; width: 100%; background-color: " + w.bg_color + "; border-radius: 10px; overflow: hidden; box-sizing: border-box;"
+        let mut l_ch: string = ""
+        let mut l_i: int = 0
+        while l_i < len(w.children):
+            l_ch = l_ch + render_widget_to_html(w.children[l_i])
+            l_i = l_i + 1
+        return "<div style=\"" + list_style + "\">" + l_ch + "</div>"
+
+    // 68: NavigationStack (SwiftUI NavigationStack)
+    if k == 68:
+        let mut ns_head: string = ""
+        if len(w.text) > 0:
+            ns_head = "<div style=\"font-size: 28px; font-weight: 700; color: #ffffff; padding: 16px 20px;\">" + w.text + "</div>"
+        let mut ns_ch: string = ""
+        if len(w.children) > 0:
+            ns_ch = render_widget_to_html(w.children[0])
+        return "<div style=\"display: flex; flex-direction: column; width: 100%; min-height: 100vh;\">" + ns_head + ns_ch + "</div>"
+
+    // 69: NavigationLink (SwiftUI NavigationLink)
+    if k == 69:
+        let mut nl_ch: string = ""
+        if len(w.children) > 0:
+            nl_ch = render_widget_to_html(w.children[0])
+        return "<a href=\"" + w.url + "\" style=\"display: block; width: 100%; text-decoration: none; color: inherit;\">" + nl_ch + "</a>"
+
+    // 70: Gauge (SwiftUI Gauge)
+    if k == 70:
+        let g_style: string = "display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box;"
+        let pct: int = (w.value * 100) / w.max_value
+        let bar_style: string = "width: 100%; height: " + str(w.height) + "px; background: " + w.bg_color + "; border-radius: 6px; overflow: hidden;"
+        let fill_style: string = "width: " + str(pct) + "%; height: 100%; background: " + w.color + "; border-radius: 6px;"
+        return "<div style=\"" + g_style + "\"><div style=\"display: flex; justify-content: space-between; font-size: 13px; color: #8e8e93;\"><span>" + w.text + "</span><span>" + str(w.value) + " / " + str(w.max_value) + "</span></div><div style=\"" + bar_style + "\"><div style=\"" + fill_style + "\"></div></div></div>"
+
+    // 99: RawHtml / Custom Component
+    if k == 99:
         return w.text
 
     return ""

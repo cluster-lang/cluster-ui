@@ -745,6 +745,213 @@ fn render_widget_to_android_xml(w: Widget, depth: int = 1) -> string:
         xml = xml + ind + "</com.google.android.material.card.MaterialCardView>"
         return xml
 
+    // 51: CupertinoButton -> MaterialButton (iOS Style)
+    if k == 51:
+        let mut xml: string = ind + "<com.google.android.material.button.MaterialButton\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "    android:textSize=\"" + str(w.font_size) + "sp\"\n"
+        xml = xml + ind + "    android:backgroundTint=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    app:cornerRadius=\"" + str(w.border_radius) + "dp\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 52: CupertinoNavigationBar -> MaterialToolbar (iOS Style)
+    if k == 52:
+        let mut xml: string = ind + "<com.google.android.material.appbar.MaterialToolbar\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"?attr/actionBarSize\"\n"
+        xml = xml + ind + "    app:title=\"" + w.text + "\"\n"
+        xml = xml + ind + "    app:titleCentered=\"true\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 53: CupertinoTabBar -> BottomNavigationView
+    if k == 53:
+        let mut xml: string = ind + "<com.google.android.material.bottomnavigation.BottomNavigationView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 54: CupertinoActionSheet -> BottomSheet Dialog
+    if k == 54:
+        let mut xml: string = ind + "<LinearLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:orientation=\"vertical\"\n"
+        xml = xml + ind + "    android:padding=\"16dp\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\">\n"
+        xml = xml + ind + "    <TextView android:text=\"" + w.text + "\" android:textStyle=\"bold\" android:gravity=\"center\" />\n"
+        xml = xml + ind + "    <TextView android:text=\"" + w.subtitle + "\" android:gravity=\"center\" />\n"
+        let mut as_i: int = 0
+        while as_i < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[as_i], depth + 1) + "\n"
+            as_i = as_i + 1
+        xml = xml + ind + "</LinearLayout>"
+        return xml
+
+    // 55: CupertinoSwitch -> SwitchCompat (iOS Style)
+    if k == 55:
+        return ind + "<androidx.appcompat.widget.SwitchCompat\n" + ind + "    android:layout_width=\"wrap_content\"\n" + ind + "    android:layout_height=\"wrap_content\"\n" + ind + "    app:thumbTint=\"#ffffff\"\n" + ind + "    app:trackTint=\"#34C759\"\n" + ind + "/>"
+
+    // 56: CupertinoPicker -> Spinner (iOS Style)
+    if k == 56:
+        return ind + "<Spinner\n" + ind + "    android:layout_width=\"match_parent\"\n" + ind + "    android:layout_height=\"wrap_content\"\n" + ind + "/>"
+
+    // 57: CupertinoSegmentedControl -> MaterialButtonToggleGroup
+    if k == 57:
+        let mut xml: string = ind + "<com.google.android.material.button.MaterialButtonToggleGroup\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    app:singleSelection=\"true\">\n"
+        let mut sc_i: int = 0
+        while sc_i < len(w.options):
+            xml = xml + ind + "    <Button android:text=\"" + w.options[sc_i] + "\" style=\"?attr/materialButtonOutlinedStyle\" />\n"
+            sc_i = sc_i + 1
+        xml = xml + ind + "</com.google.android.material.button.MaterialButtonToggleGroup>"
+        return xml
+
+    // 58: FilledButton -> Material 3 FilledButton
+    if k == 58:
+        let mut xml: string = ind + "<com.google.android.material.button.MaterialButton\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "    android:backgroundTint=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    android:textColor=\"" + w.color + "\"\n"
+        xml = xml + ind + "    app:cornerRadius=\"" + str(w.border_radius) + "dp\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 59: OutlinedButton -> Material 3 OutlinedButton
+    if k == 59:
+        let mut xml: string = ind + "<com.google.android.material.button.MaterialButton\n"
+        xml = xml + ind + "    style=\"?attr/materialButtonOutlinedStyle\"\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "    android:textColor=\"" + w.color + "\"\n"
+        xml = xml + ind + "    app:strokeColor=\"" + w.border_color + "\"\n"
+        xml = xml + ind + "    app:cornerRadius=\"" + str(w.border_radius) + "dp\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 60: TextButton -> Material 3 TextButton
+    if k == 60:
+        return ind + "<com.google.android.material.button.MaterialButton\n" + ind + "    style=\"?attr/borderlessButtonStyle\"\n" + ind + "    android:layout_width=\"wrap_content\"\n" + ind + "    android:layout_height=\"wrap_content\"\n" + ind + "    android:text=\"" + w.text + "\"\n" + ind + "    android:textColor=\"" + w.color + "\"\n" + ind + "/>"
+
+    // 61: FabExtended -> ExtendedFloatingActionButton
+    if k == 61:
+        let mut xml: string = ind + "<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        xml = xml + ind + "    android:backgroundTint=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    android:textColor=\"" + w.color + "\"\n"
+        xml = xml + ind + "    app:icon=\"@drawable/ic_" + w.icon_name + "\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 62: SearchBar -> Material 3 SearchBar
+    if k == 62:
+        return ind + "<com.google.android.material.search.SearchBar\n" + ind + "    android:layout_width=\"match_parent\"\n" + ind + "    android:layout_height=\"wrap_content\"\n" + ind + "    android:hint=\"" + w.placeholder + "\"\n" + ind + "/>"
+
+    // 63: FilterChip -> Chip (Material 3 Filter)
+    if k == 63:
+        let mut xml: string = ind + "<com.google.android.material.chip.Chip\n"
+        xml = xml + ind + "    style=\"@style/Widget.Material3.Chip.Filter\"\n"
+        xml = xml + ind + "    android:layout_width=\"wrap_content\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:text=\"" + w.text + "\"\n"
+        if w.is_checked:
+            xml = xml + ind + "    android:checked=\"true\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 64: NavigationDrawer -> NavigationView
+    if k == 64:
+        let mut xml: string = ind + "<com.google.android.material.navigation.NavigationView\n"
+        xml = xml + ind + "    android:layout_width=\"" + str(w.width) + "dp\"\n"
+        xml = xml + ind + "    android:layout_height=\"match_parent\"\n"
+        xml = xml + ind + "    android:background=\"" + w.bg_color + "\">\n"
+        let mut nd_i: int = 0
+        while nd_i < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[nd_i], depth + 1) + "\n"
+            nd_i = nd_i + 1
+        xml = xml + ind + "</com.google.android.material.navigation.NavigationView>"
+        return xml
+
+    // 65: Form -> LinearLayout / ScrollView
+    if k == 65:
+        let mut xml: string = ind + "<LinearLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:orientation=\"vertical\"\n"
+        xml = xml + ind + "    android:padding=\"" + str(w.padding) + "dp\">\n"
+        let mut f_i: int = 0
+        while f_i < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[f_i], depth + 1) + "\n"
+            f_i = f_i + 1
+        xml = xml + ind + "</LinearLayout>"
+        return xml
+
+    // 66: Section -> CardView (Grouped Section)
+    if k == 66:
+        let mut xml: string = ind + "<com.google.android.material.card.MaterialCardView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    app:cardBackgroundColor=\"" + w.bg_color + "\"\n"
+        xml = xml + ind + "    app:cardCornerRadius=\"" + str(w.border_radius) + "dp\">\n"
+        xml = xml + ind + "    <LinearLayout android:layout_width=\"match_parent\" android:layout_height=\"wrap_content\" android:orientation=\"vertical\" android:padding=\"" + str(w.padding) + "dp\">\n"
+        xml = xml + ind + "        <TextView android:text=\"" + w.text + "\" android:textStyle=\"bold\" android:textSize=\"14sp\" />\n"
+        let mut s_i: int = 0
+        while s_i < len(w.children):
+            xml = xml + render_widget_to_android_xml(w.children[s_i], depth + 2) + "\n"
+            s_i = s_i + 1
+        xml = xml + ind + "    </LinearLayout>\n"
+        xml = xml + ind + "</com.google.android.material.card.MaterialCardView>"
+        return xml
+
+    // 67: List -> RecyclerView
+    if k == 67:
+        let mut xml: string = ind + "<androidx.recyclerview.widget.RecyclerView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"match_parent\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 68: NavigationStack -> FragmentContainerView
+    if k == 68:
+        let mut xml: string = ind + "<androidx.fragment.app.FragmentContainerView\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"match_parent\"\n"
+        xml = xml + ind + "/>"
+        return xml
+
+    // 69: NavigationLink -> FrameLayout (Clickable Destination)
+    if k == 69:
+        let mut xml: string = ind + "<FrameLayout\n"
+        xml = xml + ind + "    android:layout_width=\"match_parent\"\n"
+        xml = xml + ind + "    android:layout_height=\"wrap_content\"\n"
+        xml = xml + ind + "    android:clickable=\"true\"\n"
+        xml = xml + ind + "    android:focusable=\"true\">\n"
+        if len(w.children) > 0:
+            xml = xml + render_widget_to_android_xml(w.children[0], depth + 1) + "\n"
+        xml = xml + ind + "</FrameLayout>"
+        return xml
+
+    // 70: Gauge -> ProgressBar (Circular / Gauge)
+    if k == 70:
+        return ind + "<ProgressBar\n" + ind + "    style=\"?android:attr/progressBarStyleHorizontal\"\n" + ind + "    android:layout_width=\"match_parent\"\n" + ind + "    android:layout_height=\"wrap_content\"\n" + ind + "    android:progress=\"" + str(w.value) + "\"\n" + ind + "    android:max=\"" + str(w.max_value) + "\"\n" + ind + "/>"
+
+    // 99: RawHtml / Custom Component
+    if k == 99:
+        return ind + "<!-- Custom: " + w.text + " -->"
+
     return ind + "<!-- Unsupported widget: " + str(k) + " -->"
 
 fn render_activity_layout_xml(root_widget: Widget) -> string:

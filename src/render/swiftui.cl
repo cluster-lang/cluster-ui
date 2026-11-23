@@ -526,7 +526,224 @@ fn render_widget_to_swiftui(w: Widget, depth: int = 1) -> string:
         code = code + ind + ".cornerRadius(" + str(w.border_radius) + ")"
         return code
 
-    return ind + "// Unsupported widget: " + str(k)
+    // 51: CupertinoButton (Apple iOS)
+    if k == 51:
+        let mut code: string = ind + "Button(action: { /* " + w.on_click + " */ }) {\n"
+        code = code + ind + "    Text(\"" + w.text + "\")\n"
+        code = code + ind + "        .font(.system(size: " + str(w.font_size) + ", weight: .semibold))\n"
+        code = code + ind + "        .padding(.horizontal, 20)\n"
+        code = code + ind + "        .padding(.vertical, " + str(w.padding) + ")\n"
+        if w.is_checked:
+            code = code + ind + "        .background(Color(hex: \"" + w.bg_color + "\"))\n"
+            code = code + ind + "        .foregroundColor(.white)\n"
+        else:
+            code = code + ind + "        .foregroundColor(Color(hex: \"" + w.bg_color + "\"))\n"
+        code = code + ind + "        .cornerRadius(" + str(w.border_radius) + ")\n"
+        code = code + ind + "}"
+        return code
+
+    // 52: CupertinoNavigationBar (Apple iOS Frosted Glass)
+    if k == 52:
+        let mut code: string = ind + "HStack {\n"
+        if len(w.children) > 0:
+            code = code + render_widget_to_swiftui(w.children[0], depth + 1) + "\n"
+        code = code + ind + "    Spacer()\n"
+        code = code + ind + "    Text(\"" + w.text + "\").font(.headline).fontWeight(.semibold)\n"
+        code = code + ind + "    Spacer()\n"
+        if len(w.children) > 1:
+            code = code + render_widget_to_swiftui(w.children[1], depth + 1) + "\n"
+        code = code + ind + "}\n"
+        code = code + ind + ".padding(.horizontal, 16)\n"
+        code = code + ind + ".padding(.vertical, 12)\n"
+        code = code + ind + ".background(.ultraThinMaterial)"
+        return code
+
+    // 53: CupertinoTabBar (Apple iOS Tab Bar)
+    if k == 53:
+        let mut code: string = ind + "TabView(selection: $selectedTab) {\n"
+        let mut tb_i: int = 0
+        while tb_i < len(w.children):
+            code = code + render_widget_to_swiftui(w.children[tb_i], depth + 1) + "\n"
+            tb_i = tb_i + 1
+        code = code + ind + "}"
+        return code
+
+    // 54: CupertinoActionSheet (Apple iOS Action Sheet)
+    if k == 54:
+        let mut code: string = ind + "VStack(spacing: 8) {\n"
+        code = code + ind + "    VStack(spacing: 4) {\n"
+        code = code + ind + "        Text(\"" + w.text + "\").font(.footnote).fontWeight(.bold).foregroundColor(.secondary)\n"
+        code = code + ind + "        Text(\"" + w.subtitle + "\").font(.caption).foregroundColor(.secondary)\n"
+        code = code + ind + "    }\n"
+        code = code + ind + "    .padding(14)\n"
+        let mut as_i: int = 0
+        while as_i < len(w.children):
+            code = code + render_widget_to_swiftui(w.children[as_i], depth + 1) + "\n"
+            as_i = as_i + 1
+        code = code + ind + "    Button(\"" + w.value_str + "\", role: .cancel) {}\n"
+        code = code + ind + "        .font(.headline)\n"
+        code = code + ind + "}\n"
+        code = code + ind + ".padding(16)\n"
+        code = code + ind + ".background(Color(hex: \"" + w.bg_color + "\"))\n"
+        code = code + ind + ".cornerRadius(" + str(w.border_radius) + ")"
+        return code
+
+    // 55: CupertinoSwitch (Apple iOS Fluid Toggle)
+    if k == 55:
+        return ind + "Toggle(\"\", isOn: $toggleState)\n" + ind + "    .toggleStyle(SwitchToggleStyle(tint: Color.green))"
+
+    // 56: CupertinoPicker (Apple iOS Wheel Picker)
+    if k == 56:
+        let mut code: string = ind + "Picker(\"\", selection: $selectedItem) {\n"
+        let mut p_i: int = 0
+        while p_i < len(w.options):
+            code = code + ind + "    Text(\"" + w.options[p_i] + "\").tag(" + str(p_i) + ")\n"
+            p_i = p_i + 1
+        code = code + ind + "}\n" + ind + ".pickerStyle(.wheel)"
+        return code
+
+    // 57: CupertinoSegmentedControl (Apple iOS Pill Segment)
+    if k == 57:
+        let mut code: string = ind + "Picker(\"\", selection: $selectedSegment) {\n"
+        let mut sc_i: int = 0
+        while sc_i < len(w.options):
+            code = code + ind + "    Text(\"" + w.options[sc_i] + "\").tag(" + str(sc_i) + ")\n"
+            sc_i = sc_i + 1
+        code = code + ind + "}\n" + ind + ".pickerStyle(.segmented)"
+        return code
+
+    // 58: FilledButton (Flutter Material 3)
+    if k == 58:
+        let mut code: string = ind + "Button(action: { /* " + w.on_click + " */ }) {\n"
+        code = code + ind + "    Text(\"" + w.text + "\")\n"
+        code = code + ind + "        .fontWeight(.semibold)\n"
+        code = code + ind + "        .padding(.horizontal, 24)\n"
+        code = code + ind + "        .padding(.vertical, " + str(w.padding) + ")\n"
+        code = code + ind + "        .background(Color(hex: \"" + w.bg_color + "\"))\n"
+        code = code + ind + "        .foregroundColor(Color(hex: \"" + w.color + "\"))\n"
+        code = code + ind + "        .cornerRadius(" + str(w.border_radius) + ")\n"
+        code = code + ind + "}"
+        return code
+
+    // 59: OutlinedButton (Flutter Material 3)
+    if k == 59:
+        let mut code: string = ind + "Button(action: { /* " + w.on_click + " */ }) {\n"
+        code = code + ind + "    Text(\"" + w.text + "\")\n"
+        code = code + ind + "        .fontWeight(.semibold)\n"
+        code = code + ind + "        .padding(.horizontal, 24)\n"
+        code = code + ind + "        .padding(.vertical, " + str(w.padding) + ")\n"
+        code = code + ind + "        .foregroundColor(Color(hex: \"" + w.color + "\"))\n"
+        code = code + ind + "        .overlay(RoundedRectangle(cornerRadius: " + str(w.border_radius) + ").stroke(Color(hex: \"" + w.border_color + "\"), lineWidth: 1))\n"
+        code = code + ind + "}"
+        return code
+
+    // 60: TextButton (Flutter Material 3)
+    if k == 60:
+        return ind + "Button(\"" + w.text + "\", action: { /* " + w.on_click + " */ })\n" + ind + "    .foregroundColor(Color(hex: \"" + w.color + "\"))"
+
+    // 61: FabExtended (Flutter Material 3 Extended FAB)
+    if k == 61:
+        let mut code: string = ind + "Button(action: { /* " + w.on_click + " */ }) {\n"
+        code = code + ind + "    Label(\"" + w.text + "\", systemImage: \"" + w.icon_name + "\")\n"
+        code = code + ind + "        .font(.headline)\n"
+        code = code + ind + "        .padding(.horizontal, 20)\n"
+        code = code + ind + "        .padding(.vertical, 16)\n"
+        code = code + ind + "        .background(Color(hex: \"" + w.bg_color + "\"))\n"
+        code = code + ind + "        .foregroundColor(Color(hex: \"" + w.color + "\"))\n"
+        code = code + ind + "        .cornerRadius(" + str(w.border_radius) + ")\n"
+        code = code + ind + "        .shadow(radius: 4)\n"
+        code = code + ind + "}"
+        return code
+
+    // 62: SearchBar (Flutter Material 3 Search Bar)
+    if k == 62:
+        let mut code: string = ind + "HStack(spacing: 12) {\n"
+        code = code + ind + "    Image(systemName: \"magnifyingglass\").foregroundColor(.secondary)\n"
+        code = code + ind + "    TextField(\"" + w.placeholder + "\", text: $searchText)\n"
+        code = code + ind + "}\n"
+        code = code + ind + ".padding(.horizontal, 16)\n"
+        code = code + ind + ".frame(height: " + str(w.height) + ")\n"
+        code = code + ind + ".background(Color(hex: \"" + w.bg_color + "\"))\n"
+        code = code + ind + ".cornerRadius(" + str(w.border_radius) + ")"
+        return code
+
+    // 63: FilterChip (Flutter Material 3 Filter Chip)
+    if k == 63:
+        let mut code: string = ind + "Toggle(isOn: $chipSelected) {\n"
+        code = code + ind + "    Text(\"" + w.text + "\")\n"
+        code = code + ind + "}\n"
+        code = code + ind + ".toggleStyle(.button)\n"
+        code = code + ind + ".tint(Color(hex: \"" + w.bg_color + "\"))"
+        return code
+
+    // 64: NavigationDrawer (Flutter Material 3 Navigation Drawer)
+    if k == 64:
+        let mut code: string = ind + "NavigationSplitView {\n"
+        let mut nd_i: int = 0
+        while nd_i < len(w.children):
+            code = code + render_widget_to_swiftui(w.children[nd_i], depth + 1) + "\n"
+            nd_i = nd_i + 1
+        code = code + ind + "} detail: { Text(\"Select an item\") }"
+        return code
+
+    // 65: Form (SwiftUI Form)
+    if k == 65:
+        let mut code: string = ind + "Form {\n"
+        let mut f_i: int = 0
+        while f_i < len(w.children):
+            code = code + render_widget_to_swiftui(w.children[f_i], depth + 1) + "\n"
+            f_i = f_i + 1
+        code = code + ind + "}"
+        return code
+
+    // 66: Section (SwiftUI Section)
+    if k == 66:
+        let mut code: string = ind + "Section(header: Text(\"" + w.text + "\")"
+        if len(w.subtitle) > 0:
+            code = code + ", footer: Text(\"" + w.subtitle + "\")"
+        code = code + ") {\n"
+        let mut s_i: int = 0
+        while s_i < len(w.children):
+            code = code + render_widget_to_swiftui(w.children[s_i], depth + 1) + "\n"
+            s_i = s_i + 1
+        code = code + ind + "}"
+        return code
+
+    // 67: List (SwiftUI List)
+    if k == 67:
+        let mut code: string = ind + "List {\n"
+        let mut l_i: int = 0
+        while l_i < len(w.children):
+            code = code + render_widget_to_swiftui(w.children[l_i], depth + 1) + "\n"
+            l_i = l_i + 1
+        code = code + ind + "}"
+        return code
+
+    // 68: NavigationStack (SwiftUI NavigationStack)
+    if k == 68:
+        let mut code: string = ind + "NavigationStack {\n"
+        if len(w.children) > 0:
+            code = code + render_widget_to_swiftui(w.children[0], depth + 1) + "\n"
+        code = code + ind + "}\n"
+        if len(w.text) > 0:
+            code = code + ind + ".navigationTitle(\"" + w.text + "\")"
+        return code
+
+    // 69: NavigationLink (SwiftUI NavigationLink)
+    if k == 69:
+        let mut code: string = ind + "NavigationLink(destination: Text(\"" + w.url + "\")) {\n"
+        if len(w.children) > 0:
+            code = code + render_widget_to_swiftui(w.children[0], depth + 1) + "\n"
+        code = code + ind + "}"
+        return code
+
+    // 70: Gauge (SwiftUI Gauge)
+    if k == 70:
+        return ind + "Gauge(value: " + str(w.value) + ".0, in: " + str(w.min_value) + ".0..." + str(w.max_value) + ".0) {\n" + ind + "    Text(\"" + w.text + "\")\n" + ind + "}\n" + ind + ".tint(Color(hex: \"" + w.color + "\"))"
+
+    // 99: RawHtml / Custom Component
+    if k == 99:
+        return ind + "// Custom: " + w.text
 
 fn render_swiftui_view(view_name: string, root_widget: Widget) -> string:
     let mut code: string = "// Generated by Cluster UI Compiler\n"

@@ -11,3 +11,6 @@ import src/widgets/controls.cl
 import src/widgets/feedback.cl
 import src/widgets/navigation.cl
 import src/widgets/data.cl
+import src/widgets/cupertino.cl
+import src/widgets/material3.cl
+import src/widgets/swiftui_views.cl
